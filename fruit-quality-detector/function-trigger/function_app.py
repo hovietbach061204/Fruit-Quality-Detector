@@ -7,6 +7,7 @@ from azure.iot.hub.models import CloudToDeviceMethod, CloudToDeviceMethodResult
 CONNECTION_STRING = "HostName=fruit-quality-detector-hovietbach061204.azure-devices.net;SharedAccessKeyName=service;SharedAccessKey=Ar61QMt2RSXAjRv81/YCM8z/no+swRDBcAIoTLX3Ie8="
 DEVICE_ID = "camera"
 
+
 # Details of the direct method to call.
 METHOD_NAME = "img_capture"
 METHOD_PAYLOAD = ""

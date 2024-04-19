@@ -307,7 +307,7 @@ def handle_method_request(request):
         with open('image.jpg', 'wb') as image_file:
             image_file.write(image.read())
 
-        prediction_url = 'http://20.24.164.222/image' #The Public IP address of the virtual machine in on Azure portal: 13.76.179.94
+        prediction_url = 'http://4.144.192.14/image' #The Public IP address of the virtual machine in on Azure portal: 13.76.179.94
         headers = {
             'Content-Type' : 'application/octet-stream'
         }

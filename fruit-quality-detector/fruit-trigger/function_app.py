@@ -1,8 +1,9 @@
 import azure.functions as func
 import logging
-from azure.iot.hub import IoTHubRegistryManager, models
+# from azure.iot.hub import IoTHubRegistryManager, models
 import json
-from azure.iot.hub import IoTHubRegistryManager, CloudToDeviceMethod
+from azure.iot.hub import IoTHubRegistryManager
+from azure.iot.hub.models import CloudToDeviceMethod, CloudToDeviceMethodResult
 import datetime
 
 
@@ -14,29 +15,29 @@ DEVICE_ID = "led"
  
 app = func.FunctionApp()
 
-@app.event_hub_trigger(event_hub_name="camera-trigger", connection="EventHubConnectionString") 
+@app.event_hub_message_trigger(arg_name="event", event_hub_name="camera-trigger", connection="EventHubConnectionString") 
 def eventhub_trigger(event: func.EventHubEvent):
     logging.info('Python EventHub trigger processed an event: %s', event.get_body().decode('utf-8'))
     
     # Assuming the event body contains the highest probability from the camera
     highest_probability_message = event.get_body().decode('utf-8')
     # highest_probability = json.loads(highest_probability_message)["highest_probability"]
-    highest_probability =  json.loads(highest_probability_message).get("highest_probability", -1)
-    if highest_probability == -1:
+    highest_probability_tag_name =  json.loads(highest_probability_message).get("highest_probability_tag_name", -1)
+    if highest_probability_tag_name == -1:
         return
     # Create IoTHubRegistryManager
     registry_manager = IoTHubRegistryManager(CONNECTION_STRING)
 
     # Trigger LED based on the highest probability received
-    if highest_probability > 0.5:  # Adjust this threshold as needed
+    if highest_probability_tag_name == "Ripe tomatoes":  # Adjust this threshold as needed
         # Turn on the LED if highest probability is above a certain threshold
-        logging.info("Turning LED on")
-        device_method = CloudToDeviceMethod(method_name="led_on")
-        response = registry_manager.invoke_device_method(DEVICE_ID, device_method)
-    else:
-        # Turn off the LED if highest probability is below the threshold
         logging.info("Turning LED off")
         device_method = CloudToDeviceMethod(method_name="led_off")
+        response = registry_manager.invoke_device_method(DEVICE_ID, device_method)
+    else:
+        # Turn off the LED if highest probility is below the threshold
+        logging.info("Turning LED on")
+        device_method = CloudToDeviceMethod(method_name="led_on")
         response = registry_manager.invoke_device_method(DEVICE_ID, device_method)
 
 
